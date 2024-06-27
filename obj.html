@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Object Detection</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+</head>
+<body>
+    <h1>Image Object Detection</h1>
+
+    
+    <input type="file" accept="image/*" id="imageInput" onchange="detectObjects()">
+
+    
+    <img id="selectedImage" style="max-width: 100%;">
+
+    
+    <div id="detectionResults">
+        <h2>Object Detection Results</h2>
+        <ul id="objectList">
+            
+        </ul>
+    </div>
+
+    <script>
+        async function detectObjects() {
+            const imageInput = document.getElementById("imageInput");
+            const selectedImage = document.getElementById("selectedImage");
+            const detectionResults = document.getElementById("detectionResults");
+            const objectList = document.getElementById("objectList");
+
+            const imageFile = imageInput.files[0];
+
+            if (imageFile) {
+                
+                selectedImage.src = URL.createObjectURL(imageFile);
+
+                
+                const model = await cocoSsd.load();
+
+                
+                const predictions = await model.detect(selectedImage);
+
+            
+                objectList.innerHTML = "";
+                predictions.forEach(prediction => {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `${prediction.class} (confidence: ${prediction.score.toFixed(2)})`;
+                    objectList.appendChild(listItem);
+                });
+
+                
+                detectionResults.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
